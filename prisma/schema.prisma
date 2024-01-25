@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model channels {
+  channel_url       String   @id
+  creator_user_id   String   @db.Uuid
+  chatmate_user_id  String   @db.Uuid
+  is_deleted        Boolean  @default(false)
+  message_count     Int      @default(0)
+  timestamp_created DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model users {
+  user_id           String   @db.Uuid @id
+  nickname          String?  @default("user") @db.VarChar(32)
+  profile_url       String?
+  is_deleted        Boolean  @default(false)
+  timestamp_created DateTime @default(now()) @db.Timestamptz(6)
+}
