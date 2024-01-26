@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SendBirdProvider, ChannelList, Channel } from "@sendbird/uikit-react";
 import "@sendbird/uikit-react/dist/index.css";
 import ChannelListHeaderWrapper from "@/components/ChannelListHeaderWrapper";
@@ -15,19 +15,30 @@ const useUserCreation = () => {
   const [userId, setUserId] = useState("");
   const [userNickName, setUserNickName] = useState("");
   const [userCreated, setUserCreated] = useState(false);
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
-    if (!userCreated) {
-      const generatedUserId = generateUUID();
-      const generatedUserName = generateRandomName();
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
 
-      setUserId(generatedUserId);
-      setUserNickName(generatedUserName);
+      const fetchData = async () => {
+        const generatedUserId = generateUUID();
+        const generatedUserName = generateRandomName();
 
-      APIServices.createUser(generatedUserId, generatedUserName);
-      setUserCreated(true);
+        setUserId(generatedUserId);
+        setUserNickName(generatedUserName);
+
+        try {
+          await APIServices.createUser(generatedUserId, generatedUserName);
+          setUserCreated(true);
+        } catch (error) {
+          console.error("Error creating user:", error);
+        }
+      };
+
+      fetchData();
     }
-  }, [userCreated]);
+  }, []);
 
   return { userId, userNickName };
 };
