@@ -1,10 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import db from "./database";
+import { NextApiRequest, NextApiResponse } from 'next';
+import db from './database';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     let result;
 
