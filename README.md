@@ -24,9 +24,13 @@ Ask for .env file
 
 # Technologies Used
 Prisma: ORM (Object-Relational Mapping) for database interactions.
+
 API: Backend API for handling messaging logic.
+
 PostgreSQL: Relational database for storing messages and user data.
+
 Next.JS: React framework for building the user interface.
+
 Contributing
 If you'd like to contribute to the project, please follow the guidelines outlined in the CONTRIBUTING.md file.
 
