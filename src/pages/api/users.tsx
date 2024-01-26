@@ -10,16 +10,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else if (req.method === 'PATCH') {
       result = await db.updateUser(req.body);
     } else {
-      return res.status(200).json({ message: 'Ok' });
+      return res.status(200).json({ message: 'OK Response' });
     }
 
     if (result) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json({ error: 'Operation failed. Unable to create/update user.' });
+      return res.status(200).json(result);
     }
+
+    return res.status(500).json({ error: 'Operation failed. Unable to create/update user.' });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

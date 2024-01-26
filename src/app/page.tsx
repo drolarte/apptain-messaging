@@ -51,16 +51,18 @@ const Home = () => {
   const [isSettingsVisible, setSettingsVisible] = useState(false);
   const [isSearchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [messageCount, setMessageCount] = useState(1);
+  const [messageCount, setMessageCount] = useState(0);
 
   const handleSendMessage = (text: string, quotedMessage?: any) => {
-    setMessageCount((prevCount) => prevCount + 1);
-    APIServices.updateMessageCount(channelUrl, messageCount);
+    const incrementedCount = messageCount + 1;
+    setMessageCount(incrementedCount);
+    APIServices.updateMessageCount(channelUrl, incrementedCount);
     return {
       message: text,
       quotedMessage,
     };
   };
+  
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

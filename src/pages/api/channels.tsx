@@ -3,22 +3,25 @@ import db from './database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    let result;
+    const { method, body, query } = req;
 
-    if (req.method === "POST") {
-      result = await db.createChannel(req.body);
-    } else if (req.method === "PATCH") {
-      result = await db.updateMessageCount({
-        channel_url: req.query.channel_url as string,
-        message_count: req.body.message_count,
-      });
-      
-    } else {
-      return res.status(200).json({message: "Ok"});
+    if (method === 'POST') {
+      const result = await db.createChannel(body);
+      return res.status(200).json(result);
     }
 
-    res.status(200).json(result);
+    if (method === 'PATCH') {
+      const { channel_url, message_count } = query;
+      const result = await db.updateMessageCount({
+        channel_url: channel_url as string,
+        message_count: parseInt(message_count as string, 10),
+      });
+      return res.status(200).json(result);
+    }
+
+    return res.status(200).json({ message: "Response Ok" });
   } catch (err) {
-    return res.status(500).json({ error: "failed to load data" });
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to load data' });
   }
 }
