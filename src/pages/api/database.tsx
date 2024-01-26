@@ -51,4 +51,5 @@ const updateMessageCount = async ({ channel_url, message_count }: { channel_url:
   }
 };
 
+
 export default { createUser, createChannel, updateUser, updateMessageCount };
