@@ -18,12 +18,15 @@ const request = async (method: 'post' | 'patch', path: string, data: any): Promi
 };
 
 const createUser = (user_id: string, nickname: string) => request('post', '/users', { user_id, nickname });
+
 const createChannel = (channel_url: string, creator_user_id: string, chatmate_user_id: string) =>
   request('post', '/channels', { channel_url, creator_user_id, chatmate_user_id });
+
 const updateUser = (user_id: string, nickname?: string, profile_url?: string) =>
   request('patch', '/users', { user_id, nickname, profile_url });
+  
 const updateMessageCount = (channel_url: string, message_count: number) =>
-  request('patch', '/channels', { channel_url, message_count });
+  request('patch', `/channels/${channel_url}`, { message_count });
 
 const APIServices = {
   createUser,

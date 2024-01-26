@@ -7,7 +7,8 @@ import { GroupChannel } from "@sendbird/chat/groupChannel";
 import CreateChannel from "@sendbird/uikit-react/CreateChannel";
 import generateUUID from "@/pages/api/utility/uuidgenerator";
 import generateRandomName from '@/pages/api/utility/nameGenerator';
-
+import MessageSearch from '@sendbird/uikit-react/MessageSearch';
+import ChannelSettings from '@sendbird/uikit-react/ChannelSettings';
 import type { User } from "@sendbird/chat";
 import APIServices from "@/pages/api/services/apiServices";
 
@@ -16,7 +17,7 @@ const useUserCreation = () => {
   const [userNickName, setUserNickName] = useState("");
   const [userCreated, setUserCreated] = useState(false);
   const isMountedRef = useRef(false);
-
+  
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
@@ -47,6 +48,23 @@ const Home = () => {
   const { userId, userNickName } = useUserCreation();
   const [channelUrl, setChannelUrl] = useState("");
   const [displayModal, setShowModal] = useState(false);
+  const [isSettingsVisible, setSettingsVisible] = useState(false);
+  const [isSearchVisible, setSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [messageCount, setMessageCount] = useState(1);
+
+  const handleSendMessage = (text: string, quotedMessage?: any) => {
+    setMessageCount((prevCount) => prevCount + 1);
+    APIServices.updateMessageCount(channelUrl, messageCount);
+    return {
+      message: text,
+      quotedMessage,
+    };
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
 
   const handleEditProfile = (user: User) => {
     APIServices.updateUser(user.userId, user.nickname, user.profileUrl);
@@ -72,7 +90,13 @@ const Home = () => {
         userId={userId} 
         nickname={userNickName}
         profileUrl="https://file-us-1.sendbird.com/profile_images/f6d560dee03b4ab39c64a7ecff6b56c6.jpg"
-        >
+        uikitOptions={{
+          groupChannelSettings: {
+            enableMessageSearch: true,
+          },
+        }}
+       >
+
       <div className="App flex">
         <ChannelList
           onChannelSelect={(channel) => setChannelUrl(channel ? channel.url : "")}
@@ -87,11 +111,43 @@ const Home = () => {
             </div>
           )}
         />
+
         {displayModal && (
           <CreateChannel onCreateChannel={handleCreateChannel} onCancel={() => setShowModal(false)} />
         )}
-        <Channel channelUrl={channelUrl} />
+
+        <Channel 
+          channelUrl={channelUrl}
+          onChatHeaderActionClick={() => {
+            setSettingsVisible(!isSettingsVisible)
+          }}
+          onSearchClick={() => {
+            setSearchVisible(!isSearchVisible)
+          }}  
+          onBeforeSendUserMessage={handleSendMessage}
+        />
+
+        {isSettingsVisible && channelUrl && (
+          <div className="channel-settings">
+            <ChannelSettings
+              channelUrl={channelUrl}
+              onCloseClick={()=> {setSettingsVisible(!isSettingsVisible)}}
+            />
+          </div>
+        )}
+
+        {isSearchVisible && channelUrl && (
+          <div className="channel-settings">
+            <MessageSearch
+              channelUrl={channelUrl}
+              onCloseClick={()=> {setSearchVisible(!isSearchVisible)}}
+              messageSearchQuery={searchQuery}
+              onResultClick={handleSearch}
+            />
+          </div>
+        )}
       </div>
+      
     </SendBirdProvider>
   );
 };
