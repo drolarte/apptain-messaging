@@ -22,11 +22,14 @@ const createChannel = (channel_url: string, creator_user_id: string, chatmate_us
   request('post', '/channels', { channel_url, creator_user_id, chatmate_user_id });
 const updateUser = (user_id: string, nickname?: string, profile_url?: string) =>
   request('patch', '/users', { user_id, nickname, profile_url });
+const updateMessageCount = (channel_url: string, message_count: number) =>
+  request('patch', '/channels', { channel_url, message_count });
 
 const APIServices = {
   createUser,
   createChannel,
   updateUser,
+  updateMessageCount
 };
 
 export default APIServices;

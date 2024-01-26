@@ -17,4 +17,10 @@ const updateUser = async ({ user_id, nickname, profile_url }: { user_id: string;
     data: { nickname, profile_url },
   });
 
-export default { createUser, createChannel, updateUser };
+  const updateMessageCount = async ({ channel_url, message_count }: { channel_url: string; message_count: number }) =>
+  prisma.channels.update({
+    where: { channel_url },
+    data: { message_count, },
+  });
+
+export default { createUser, createChannel, updateUser, updateMessageCount };
