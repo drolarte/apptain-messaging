@@ -1,34 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Apptain Messaging by David Olarte
 
-## Getting Started
+This project is a messaging application generated using Create Next App.
 
-First, Make sure you are running Node Version v18.17.0
+# Setup
+Requirements:
 
-Second, run the development server:
+Node v18.17.00
 
-```bash
+Installation
+Ensure you have Node.js installed by downloading it from nodejs.org. Then, install project dependencies using the following command:
+
+npm install
+
+# Running the App
+To run the application locally, use the following command:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Make sure to have Node version 18.17.00 installed before proceeding with the setup.
 
-## Learn More
+# Configuration
+Ask for .env file
 
-To learn more about Next.js, take a look at the following resources:
+# Technologies Used
+Prisma: ORM (Object-Relational Mapping) for database interactions.
+API: Backend API for handling messaging logic.
+PostgreSQL: Relational database for storing messages and user data.
+Next.JS: React framework for building the user interface.
+Contributing
+If you'd like to contribute to the project, please follow the guidelines outlined in the CONTRIBUTING.md file.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# License
+This project is licensed under the MIT License.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Feel free to customize or expand upon the "Technologies Used" section to provide more details about how each technology contributes to your project. This section gives users and potential contributors a quick overview of the tech stack used in your application.
