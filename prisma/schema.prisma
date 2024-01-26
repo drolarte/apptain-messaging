@@ -19,7 +19,7 @@ model channels {
 model users {
   user_id           String   @db.Uuid @id
   nickname          String?  @default("user") @db.VarChar(32)
-  profile_url       String?
+  profile_url       String?  @default("https://file-us-1.sendbird.com/profile_images/f6d560dee03b4ab39c64a7ecff6b56c6.jpg")
   is_deleted        Boolean  @default(false)
   timestamp_created DateTime @default(now()) @db.Timestamptz(6)
 }

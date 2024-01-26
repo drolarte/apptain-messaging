@@ -11,52 +11,73 @@ import generateRandomName from '@/pages/api/utility/nameGenerator';
 import type { User } from "@sendbird/chat";
 import APIServices from "@/pages/api/services/apiServices";
 
+const useUserCreation = () => {
+  const [userId, setUserId] = useState("");
+  const [userNickName, setUserNickName] = useState("");
+  const [userCreated, setUserCreated] = useState(false);
+
+  useEffect(() => {
+    if (!userCreated) {
+      const generatedUserId = generateUUID();
+      const generatedUserName = generateRandomName();
+
+      setUserId(generatedUserId);
+      setUserNickName(generatedUserName);
+
+      APIServices.createUser(generatedUserId, generatedUserName);
+      setUserCreated(true);
+    }
+  }, [userCreated]);
+
+  return { userId, userNickName };
+};
+
 const Home = () => {
+  const { userId, userNickName } = useUserCreation();
   const [channelUrl, setChannelUrl] = useState("");
   const [displayModal, setShowModal] = useState(false);
-  const [userId, setUserId] = useState("");
-  const [userCreated, setUserCreated] = useState(false);
-  
-  const randomName = generateRandomName();
 
   const handleEditProfile = (user: User) => {
     APIServices.updateUser(user.userId, user.nickname, user.profileUrl);
   };
 
   const handleCreateChannel = (channel: GroupChannel) => {
-    if (channel.memberCount == 2) {
-      const chatmate = channel.members.at(-1);
+    if (channel.memberCount === 2) {
+      const currentUserId = userId;
+      const chatmate = channel.members.find((member) => member.userId !== currentUserId);
 
+      if (chatmate) {
+        APIServices.createChannel(channel.url, currentUserId, chatmate.userId);
+      } else {
+        console.error("Unable to find the other member in the channel.");
+      }
     }
     setShowModal(false);
   };
-  useEffect(() => {
-    if (!userCreated) {
-      setUserId(generateUUID());
-      APIServices.createUser(generateUUID(), generateRandomName());
-      setUserCreated(true); // Mark user as created
-    }
-  }, [userCreated]);
   
   return (
-    <SendBirdProvider
-      appId="8056AAA9-9594-4FE3-90AA-218173F46E42"
-      userId={userId}
-      nickname={randomName}
-    >
+    <SendBirdProvider 
+        appId="8056AAA9-9594-4FE3-90AA-218173F46E42" 
+        userId={userId} 
+        nickname={userNickName}
+        profileUrl="https://file-us-1.sendbird.com/profile_images/f6d560dee03b4ab39c64a7ecff6b56c6.jpg"
+        >
       <div className="App flex">
         <ChannelList
           onChannelSelect={(channel) => setChannelUrl(channel ? channel.url : "")}
           onProfileEditSuccess={handleEditProfile}
           renderHeader={() => (
-            <ChannelListHeaderWrapper onClickCreateChannel={() => setShowModal(true)} />
+            <div>
+              <ChannelListHeaderWrapper
+                onClickCreateChannel={() => {
+                  setShowModal(true);
+                }}
+              />
+            </div>
           )}
         />
         {displayModal && (
-          <CreateChannel
-            onCreateChannel={handleCreateChannel}
-            onCancel={() => setShowModal(false)}
-          />
+          <CreateChannel onCreateChannel={handleCreateChannel} onCancel={() => setShowModal(false)} />
         )}
         <Channel channelUrl={channelUrl} />
       </div>
