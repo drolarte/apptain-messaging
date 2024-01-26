@@ -1,10 +1,17 @@
-// utils/jwt.ts
 import jwt from 'jsonwebtoken';
+import * as dotenv from 'dotenv';
 
-const secret = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOTY5MTA5NDk4OCIsIm5hbWUiOiJEYXZpZCBPbGFydGUiLCJpYXQiOjE1MTYyMzkwMjJ9.KYg9O1S8sBJ2yiu_bmyO-EZkTn-1fqTnb923mKAUaFs';
+dotenv.config();
+
+const secret = process.env.JWT_SECRET_KEY;
+
+if (!secret) {
+  console.error('JWT_SECRET_KEY is not defined in the environment variables.');
+  process.exit(1);
+}
 
 const generateToken = (payload: any) => {
-  return jwt.sign(payload, secret, { expiresIn: '1h' }); // Set token expiration time
+  return jwt.sign(payload, secret, { expiresIn: '1h' });
 };
 
 const verifyToken = (token: string) => {
