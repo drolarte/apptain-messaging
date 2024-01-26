@@ -1,4 +1,6 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
+import { generateToken, verifyToken } from '../utility/jwt';
+
 
 const apiClient = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -6,6 +8,14 @@ const apiClient = axios.create({
     "Content-type": "application/json",
   },
 });
+
+const setAuthHeader = (token: string) => {
+  apiClient.defaults.headers.Authorization = `Bearer ${token}`;
+};
+
+const removeAuthHeader = () => {
+  delete apiClient.defaults.headers.Authorization;
+};
 
 const handleRequestError = (method: string, path: string, error: AxiosError) => {
   if (axios.isAxiosError(error)) {
@@ -27,21 +37,28 @@ const handleRequestError = (method: string, path: string, error: AxiosError) => 
   }
 };
 
-const request = async (method: 'post' | 'patch', path: string, data: any, ): Promise<AxiosResponse> => {
+const request = async (method: 'post' | 'patch', path: string, data: any, token?: string ): Promise<AxiosResponse> => {
+  if (token) {
+    setAuthHeader(token);
+  }
+
   try {
     const response = await apiClient[method](path, data);
     return response;
   } catch (error) {
     handleRequestError(method, path, error as AxiosError);
     throw error;
+  } finally {
+    removeAuthHeader();
   }
 };
 
 const createUser = async (user_id: string, nickname: string) => {
   try {
     const response = await request('post', '/users', { user_id, nickname });
+    const token = generateToken({ userId: response.data.user_id });
     console.log('Create user successful. Response:', response.data);
-    return response;
+    return { response, token };
   } catch (error) {
     console.error('Error creating user:', error);
     throw error;
@@ -85,7 +102,20 @@ const updateMessageCount = async (channel_url: string, message_count: number) =>
   }
 };
 
+const login = async (user_id: string, nickname: string) => {
+  try {
+    const response = await request('post', '/auth/login', { user_id, nickname });
+    const token = generateToken({ userId: response.data.user_id });
+    console.log('Login successful. Response:', response.data);
+    return { response, token };
+  } catch (error) {
+    console.error('Error logging in:', error);
+    throw error;
+  }
+};
+
 const APIServices = {
+  login,
   createUser,
   createChannel,
   updateUser,
